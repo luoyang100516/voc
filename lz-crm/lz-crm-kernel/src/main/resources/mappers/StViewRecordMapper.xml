@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.StViewRecordMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.lizhen.crm.api.entity.StViewRecord" id="stViewRecordMap">
+        <result property="id" column="id"/>
+        <result property="staffId" column="staff_id"/>
+        <result property="chapterId" column="chapter_id"/>
+        <result property="videoTime" column="video_time"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <select id="selectRecordList" resultType="com.lizhen.crm.api.dto.ViewRecordDTO" parameterType="int">
+            SELECT
+                sum( time ) videoTime,
+                lesson_id lessonId
+            FROM
+                (
+                SELECT
+                    lesson_id,
+                    staff_id,
+                    chapter_id,
+                    max( t1.video_time ) time
+                FROM
+                    st_view_record t1
+                    LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+                WHERE
+                    staff_id = #{staffId}
+                GROUP BY
+                    staff_id,
+                    chapter_id,
+                    t2.lesson_id
+                ) t
+            GROUP BY
+	        lesson_id
+    </select>
+
+    <select id="selectRecord" resultMap="stViewRecordMap" parameterType="map">
+        select * from st_view_record where staff_id = #{staffId} and  chapter_id= #{chapterId}
+        order by id desc limit 1
+    </select>
+    <insert id="insertBatch" parameterType="com.lizhen.crm.api.entity.StViewRecord">
+        insert into st_view_record
+        (staff_id , chapter_id , video_time , create_date) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.staffId},#{item.chapterId},#{item.videoTime},#{item.createDate})
+        </foreach>
+    </insert>
+</mapper>

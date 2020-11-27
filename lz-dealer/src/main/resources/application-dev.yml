@@ -1,0 +1,85 @@
+# Tomcat
+http:
+    port: 8443
+server:
+  port: 8088
+  ssl:
+      enabled : false #是否启用https
+  #    证书路径
+      key-store: classpath:cloud.key
+      key-store-type: JKS
+      key-alias: cloudkey
+  #    配置密码，就是在生成证书的时候输入的密码
+      key-store-password: cloudkey
+spring:
+  aop:
+    proxy-target-class: true
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  resources:
+    static-locations: classpath:/static/,classpath:/views/
+  #redis
+  redis:
+    database: 0
+    host: localhost
+    password:
+    timeout: 2000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+    local:
+      host: localhost
+#      host: 101.132.134.161
+      port: 6379
+dubbo:
+  registry:
+    protocol: zookeeper
+#    address: 192.168.247.128:2181
+    address: localhost:2181
+    timeout: 10000
+    check: false
+    filter: dubboServiceFilter
+  admin:
+    username:
+    password:
+  protocol:
+    name: dubbo
+    port:
+  application:
+    name: lz-dealer
+  consumer:
+    timeout: 60000
+    check: false
+  aop:
+    proxy-target-class: true
+
+
+
+#qn:
+#  accessKey: CxCd8A7KZHPVckebezlwYT6gFtx5VJ5jj_jnRvxX
+#  secretKey: 2tCORDrU-VT9Pn8xuWjNlEhxd0PG6nHS8w59i-Ud
+#  imageBucket: ly-voc
+#  videoBucket: ly-voc-video
+#  remoteUrl: http://qfd0rxv55.hn-bkt.clouddn.com/
+
+qn:
+  accessKey: b55AcloPo7Bj5CBK-k2xpRw5ODnmIZv3MWxG7VK-
+  secretKey: MdnSrHlo2-lDmXva8OwcVmdQ_DR764tpnR5jsuBV
+  imageBucket: shwosi-image
+  videoBucket: shwosi
+  remoteUrl: http://video.zhiyeyun.com.cn
+  remoteImageUrl: http://image.zhiyeyun.com.cn/
+  fileLocalUrl: /usr/local/vocation/file/
+  fileUrl: http://test.zhiyeyun.com.cn/file/
+
+
+logging:
+  file: ./logs/lizhen-cloud.log
+  level.com.*: debug
+
+
+

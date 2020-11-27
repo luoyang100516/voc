@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.DeProjectBaseMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.lizhen.crm.api.entity.DeProjectBase" id="deProjectBaseMap">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="code" column="code"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="masterId" column="master_id"/>
+        <result property="masterName" column="master_name"/>
+        <result property="videoTime" column="video_time"/>
+        <result property="classTime" column="class_time"/>
+        <result property="minutes" column="minutes"/>
+        <result property="staffCount" column="staff_count"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+    <select id="getUpdateKey" resultType="java.lang.String">
+        select update_key from de_project_update_key
+    </select>
+
+    <insert id="insertPaperRelation" parameterType="map">
+        insert into de_project_paper
+        (paper_id , project_id) values
+        <foreach collection="ids" item="item" separator=",">
+            (#{item},#{id})
+        </foreach>
+    </insert>
+    <select id="getPaperRelation" parameterType="int" resultType="int">
+        select paper_id from de_project_paper where project_id = #{id}
+    </select>
+    <delete id="deletePaperRelation" parameterType="int">
+        delete from de_project_paper where project_id = #{id}
+    </delete>
+
+    <insert id="insertLessonRelation" parameterType="map">
+        insert into de_project_lesson
+        (lesson_id , project_id) values
+        <foreach collection="ids" item="item" separator=",">
+            (#{item},#{id})
+        </foreach>
+    </insert>
+    <select id="getLessonRelation" parameterType="int" resultType="int">
+        select lesson_id from de_project_lesson where project_id = #{id}
+    </select>
+    <delete id="deleteLessonRelation" parameterType="int">
+        delete from de_project_lesson where project_id = #{id}
+    </delete>
+
+    <insert id="insertLessonPaperRelation" parameterType="map">
+        insert into de_project_lesson_paper
+        (paper_id , lesson_id, project_id) values
+        <foreach collection="ids" item="item" separator=",">
+            (#{item},#{lessonId},#{projectId})
+        </foreach>
+    </insert>
+    <select id="getLessonPaperRelation" parameterType="map" resultType="int">
+        select paper_id from de_project_lesson_paper where project_id = #{projectId} and lesson_id = #{lessonId}
+    </select>
+    <delete id="deleteLessonPaperRelation" parameterType="int">
+        delete from de_project_lesson_paper where project_id = #{projectId} and lesson_id = #{lessonId}
+    </delete>
+
+    <insert id="insertStaffRelation" parameterType="map">
+        insert into de_project_staff
+        (staff_id , project_id) values
+        <foreach collection="ids" item="item" separator=",">
+            (#{item},#{id})
+        </foreach>
+    </insert>
+    <select id="getStaffRelation" parameterType="int" resultType="int">
+        select staff_id from de_project_staff where project_id = #{id}
+    </select>
+    <delete id="deleteStaffRelation" parameterType="int">
+        delete from de_project_staff where project_id = #{id}
+    </delete>
+
+
+    <select id="getProjectIds" parameterType="int" resultType="int">
+        select t1.project_id from de_project_staff t1 left join de_project_base t2 on t1.project_id = t2.id
+        where staff_id = #{id} and t2.status = 1
+    </select>
+
+
+    <select id="getPaperIds" parameterType="int" resultType="int">
+        (select distinct paper_id from de_project_lesson_paper where project_id in
+            (select project_id from de_project_staff where staff_id = #{id}))
+        union all
+        (select distinct paper_id from de_project_paper where project_id in
+            (select project_id from de_project_staff where staff_id = #{id}))
+    </select>
+
+</mapper>

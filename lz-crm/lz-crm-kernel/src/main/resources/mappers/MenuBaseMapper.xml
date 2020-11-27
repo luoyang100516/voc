@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lizhen.crm.kernel.dao.MenuBaseMapper">
+  <resultMap id="BaseResultMap" type="com.lizhen.crm.api.entity.MenuBase">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="obj_remark" jdbcType="VARCHAR" property="objRemark" />
+    <result column="obj_status" jdbcType="INTEGER" property="objStatus" />
+    <result column="obj_createdate" jdbcType="TIMESTAMP" property="objCreatedate" />
+    <result column="obj_createuser" jdbcType="INTEGER" property="objCreateuser" />
+    <result column="obj_modifydate" jdbcType="TIMESTAMP" property="objModifydate" />
+    <result column="obj_modifyuser" jdbcType="INTEGER" property="objModifyuser" />
+  </resultMap>
+  <sql id="base_column_var">
+      <if test="type!=null and  type!='' ">
+          AND m.type  LIKE CONCAT('%',#{type},'%')
+      </if>
+      <if test="name!=null and  name!=''">
+          AND m.name LIKE CONCAT('%',#{name},'%')
+      </if>
+      <if test="url!=null and  url!='' ">
+          AND m.url LIKE CONCAT('%',#{url},'%')
+      </if>
+  </sql>
+  <select id="getMenuListById" resultMap="BaseResultMap">
+       SELECT
+          m.id, m.name, m.url,
+          m.type, m.sort, m.icon, m.parent_id,
+          m.status, m.obj_remark, m.obj_status,
+          m.obj_createdate, m.obj_createuser, m.obj_modifydate,
+          m.obj_modifyuser
+        FROM  mg_menu m  where 1=1
+      <include refid="base_column_var"></include>
+      limit  #{ start } ,#{ pageSize }
+  </select>
+  <select id="getMeunCount" resultType="java.lang.Integer" >
+       SELECT
+             count(*)
+        FROM
+      mg_menu m where 1=1
+      <include refid="base_column_var"></include>
+   </select>
+    <select id="getMenuListByType" resultMap="BaseResultMap">
+        SELECT
+        m.id, m.name, m.url,
+        m.type, m.sort, m.icon, m.parent_id,
+        m.status, m.obj_remark, m.obj_status,
+        m.obj_createdate, m.obj_createuser, m.obj_modifydate,
+        m.obj_modifyuser
+        FROM  mg_menu  m  where 1=1
+        <if test="type!=null and  type!='' ">
+            AND   m.type = #{type}
+        </if>
+        <if test="id!=null and  id!='' ">
+            AND   m.id = #{id}
+        </if>
+    </select>
+    <insert id="saveMenu" >
+        INSERT INTO  mg_menu ( name ,url , type ,sort ,parent_id ,icon ,obj_remark ) VALUES ( #{name}, #{url}, #{type},#{sort}, #{parentId}, #{icon}, #{objRemark} )
+    </insert>
+    <update id="updateMenu">
+        update  mg_menu set name = #{name}, url = #{url}, type = #{type},sort = #{sort}, parent_id = #{parentId}, icon = #{icon}, obj_remark = #{objRemark}
+        where id=#{id}
+    </update>
+    <delete id="delMenu">
+        delete  from  mg_menu where id=#{id}
+    </delete>
+
+
+
+
+
+</mapper>

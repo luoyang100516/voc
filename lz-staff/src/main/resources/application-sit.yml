@@ -1,0 +1,85 @@
+# Tomcat
+http:
+    port: 8443
+server:
+#  port: 8087
+  port: 8055
+  ssl:
+      enabled : false #是否启用https
+  #    证书路径
+      key-store: classpath:cloud.key
+      key-store-type: JKS
+      key-alias: cloudkey
+  #    配置密码，就是在生成证书的时候输入的密码
+      key-store-password: cloudkey
+spring:
+#  tomcat:
+#    basedir: /data/tomcat
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  resources:
+    static-locations: classpath:/static/,classpath:/views/
+  #redis
+  redis:
+    database: 0
+    host: 127.0.0.1
+    password:
+    timeout: 2000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+    local:
+      host: 127.0.0.1
+#      host: 101.132.134.161
+      port: 6379
+dubbo:
+  registry:
+    protocol: zookeeper
+    address: 127.0.0.1:2181
+    timeout: 10000
+    check: false
+    #filter: dubboServiceFilter
+  admin:
+    username:
+    password:
+  protocol:
+    name: dubbo
+    port:
+  application:
+    name: lz-cloud
+  consumer:
+    timeout: 60000
+    check: false
+  aop:
+    proxy-target-class: true
+    auto: true
+lizhen:
+  upload:
+    prefix: lizhen/dealeroa
+    remote:
+      path: http://101.132.134.161:8089/
+    local:
+      path: /usr/local/jxsoa_document/
+  download:
+    file:
+      remote:
+        path: http://101.132.134.161:80/files/
+      local:
+        path: /usr/local/jxsoa_document/
+  #用户默认头像
+  head:
+    url: http://101.132.134.161:8089/files/head/head.png
+  #会议室配置
+  meetRoom:
+    partition:
+      size: 24
+      lastTime: "20:30"
+logging:
+  file: ./logs/lizhen-cloud.log
+  level.com.*: info
+
+

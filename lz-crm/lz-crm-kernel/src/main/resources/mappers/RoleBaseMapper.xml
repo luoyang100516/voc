@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lizhen.crm.kernel.dao.RoleBaseMapper" >
+  <resultMap id="BaseResultMap" type="com.lizhen.crm.api.entity.RoleBase" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="obj_remark" property="objRemark" jdbcType="VARCHAR" />
+    <result column="obj_status" property="objStatus" jdbcType="INTEGER" />
+    <result column="obj_createdate" property="objCreatedate" jdbcType="TIMESTAMP" />
+    <result column="obj_createuser" property="objCreateuser" jdbcType="INTEGER" />
+    <result column="obj_modifydate" property="objModifydate" jdbcType="TIMESTAMP" />
+    <result column="obj_modifyuser" property="objModifyuser" jdbcType="INTEGER" />
+  </resultMap>
+
+  <select id="getRole" resultMap="BaseResultMap">
+    SELECT
+    m.id, m.name,
+    m.remark,
+    m.obj_remark, m.status, m.obj_status,
+    m.obj_createdate, m.obj_createuser, m.obj_modifydate,
+    m.obj_modifyuser
+    FROM  mg_role m
+    WHERE m.id =#{id}
+  </select>
+
+  <select id="getRoleList" resultMap="BaseResultMap">
+    SELECT
+    m.id, m.name,
+    m.remark,
+    m.obj_remark, m.status, m.obj_status,
+    m.obj_createdate, m.obj_createuser, m.obj_modifydate,
+    m.obj_modifyuser
+    FROM  mg_role m  where 1=1
+    <if test="name!=null and name!='' ">
+      AND m.name LIKE CONCAT('%',#{name},'%')
+    </if>
+    <if test="status!=null ">
+      AND m.status =#{status}
+    </if>
+    <if test="start!=null and pageSize!=null">
+      limit  #{ start } ,#{ pageSize }
+    </if>
+  </select>
+
+  <select id="getRoleCount" resultType="java.lang.Integer" >
+    SELECT
+       count(*)
+    FROM
+    mg_role m where 1=1
+    <if test="name!=null and name!='' ">
+      AND m.name LIKE CONCAT('%',#{name},'%')
+    </if>
+    <if test="status!=null ">
+      AND m.status =#{status}
+    </if>
+  </select>
+
+<update id="updateRoleBase">
+   update  mg_role
+   <set>
+     <if test="name!=null and name!='' ">
+        name = #{name},
+     </if>
+     <if test="status!=null ">
+       status = #{status},
+     </if>
+     <if test="objRemark!=null and objRemark!='' ">
+       obj_remark = #{objRemark},
+     </if>
+     <if test="remark!=null and remark!='' ">
+       remark = #{remark},
+     </if>
+   </set>
+    where id=#{id}
+</update>
+
+  <delete id="delRole">
+    delete  from  mg_role where id=#{ id }
+  </delete>
+
+  <delete id="delRoleMenu">
+    delete  from  mg_role_menu  where role_id = #{ id }
+  </delete>
+
+  <insert id="newRole" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO  mg_role ( name ,status ,obj_remark ,remark ) VALUES ( #{name}, #{status}, #{objRemark} ,#{remark} )
+  </insert>
+
+  <insert id="newRoleMenu"  >
+        INSERT INTO  mg_role_menu ( role_id ,menu_id  ) VALUES ( #{ roleId } , #{ menuId } )
+  </insert>
+
+  <select id="getRoleMenus"  resultType="com.lizhen.crm.api.entity.MenuBase" >
+        SELECT
+            m.id,
+            m.name,
+            m.url,
+            m.type,
+            m.icon,
+            m.sort,
+            m.parent_id AS parentId
+        FROM
+            mg_role_menu rm
+        INNER JOIN mg_menu m ON rm.menu_id = m.id
+        where rm.role_id = #{ roleId } and r.status = 1 order by  m.sort
+  </select>
+</mapper>

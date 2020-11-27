@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.StClockInRecordMapper">
+
+
+    <select id="getStaffByNFC" resultType="int" parameterType="com.lizhen.crm.api.dto.StaffNFC">
+    SELECT
+        t1.id
+    FROM
+        de_staff t1
+        LEFT JOIN mg_merchant t2 ON t1.merchant_id = t2.id
+    WHERE
+        t2.device_number = #{deviceNumber}
+        AND ( t1.phone = #{userInfo}  OR t1.social_no = #{userInfo} OR t1.uid = #{userInfo}  )
+        limit 1
+  </select>
+    <insert id="saveStaffNFC"  parameterType="com.lizhen.crm.api.entity.StClockInRecord">
+    insert into st_nfc_clock_in_record (staff_id,ip_url,address) values
+    (#{staffId},#{ipUrl},#{address})
+  </insert>
+
+    <select id="getStaffProject" resultType="com.lizhen.crm.api.dto.StProjectDTO">
+	select t1.project_id projectId,t1.staff_id staffId
+	from de_project_staff t1
+	inner JOIN
+	( SELECT * FROM st_nfc_clock_in_record
+	WHERE create_date BETWEEN date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 8 HOUR )
+	 and date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 11 HOUR ) )
+	 t2 ON t1.staff_id = t2.staff_id
+	ORDER BY t1.project_id
+    </select>
+
+    <select id="getProjectChapter" resultType="com.lizhen.crm.api.entity2.MgClassChapter" parameterType="int">
+	select t3.id,t3.video_time videoTime from de_project_lesson t1
+	LEFT JOIN de_class_lesson t2 on t1.lesson_id = t2.id
+	left join mg_class_chapter t3 on t2.class_id = t3.lesson_id
+	where t3.status = 1 and t1.project_id = #{projectId} order by t3.id
+    </select>
+    <select id="getStaffLastChapter" resultType="int" parameterType="int">
+	select chapter_id from st_view_record where staff_id =  #{staffId} order by id desc LIMIT 1
+    </select>
+
+</mapper>

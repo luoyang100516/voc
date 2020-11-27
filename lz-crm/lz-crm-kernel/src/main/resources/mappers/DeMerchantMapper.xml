@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.DeMerchantMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.lizhen.crm.api.entity.DeMerchant" id="deMerchantMap">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="platName" column="plat_name"/>
+        <result property="logoUrl" column="logo_url"/>
+        <result property="bannerUrl" column="banner_url"/>
+        <result property="firstDomain" column="first_domain"/>
+        <result property="secondDomain" column="second_domain"/>
+        <result property="icpNo" column="icp_no"/>
+        <result property="copyright" column="copyright"/>
+        <result property="phone" column="phone"/>
+        <result property="qq" column="qq"/>
+        <result property="wechat" column="wechat"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+
+    <select id="getMerchant" resultMap="deMerchantMap" parameterType="java.lang.String">
+        select * from de_merchant t1
+        left join (select id mId,access_parameters ap,server_directory sd from mg_merchant) t2 on t1.merchant_id = t2.mId
+        where t2.ap = #{url} or t2.sd = #{url}
+    </select>
+</mapper>

@@ -1,0 +1,48 @@
+spring:
+  profiles:
+    active: dev
+#    active: sit
+#    active: prod
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 215MB
+      enabled: true
+
+#mybatis:
+#  type-aliases-package: com.lizhen.kernel.model
+#  mapper-locations: classpath*:mappers/**/*.xml
+#  mappers: com.lizhen.kernel.dao
+#  identity: MYSQL
+mybatis-plus:
+  mapper-locations: classpath:/mappers/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+system:
+    encryptJWTKey: U0JBUElKV1RkV2FuZzkyNjQ1NA==
+    encryptAESKey: V2FuZzkyNjQ1NGRTQkFQSUpXVA==
+    accessTokenExpireTime: 43200
+#pagehelper
+#pagehelper:
+#  helperDialect: mysql
+#  reasonable: true
+#  supportMethodsArguments: true
+#  params: count=countSql
+
+
+file:
+    upload-dir: /usr/local/hcjg/uploads
+#    upload-dir: /root/jianguan/uploads
+    url: oss-cn-shanghai.aliyuncs.com
+    key: LTAI0oAelhyBX0E6
+    secret: l0FwJH7W1RHfgVhXZb3B3B3tSSZ8vJ
+    name: jhpt

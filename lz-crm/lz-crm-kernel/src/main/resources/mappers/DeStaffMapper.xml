@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.DeStaffMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.lizhen.crm.api.entity.DeStaff" id="deStaffMap">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="name" column="name"/>
+        <result property="account" column="account"/>
+        <result property="password" column="password"/>
+        <result property="code" column="code"/>
+        <result property="gender" column="gender"/>
+        <result property="phone" column="phone"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="idCard" column="id_card"/>
+        <result property="postName" column="post_name"/>
+        <result property="workType" column="work_type"/>
+        <result property="signNo" column="sign_no"/>
+        <result property="wechat" column="wechat"/>
+        <result property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="headImage" column="head_image"/>
+        <result property="socialNo" column="social_no"/>
+    </resultMap>
+    <select id="getSignList" parameterType="com.lizhen.common.request.RequestBase" resultType="com.lizhen.crm.api.dto.StClockInRecordDTO">
+        SELECT
+            t2.department_name departmentName,
+            t2.name,
+            t2.phone,
+            t2.social_no socialNo,
+            t2.id_card idCard,
+            DATE_FORMAT(t1.create_date , "%Y-%m-%d %H:%i:%s" ) createDate
+        FROM
+            st_clock_in_record t1
+            LEFT JOIN de_staff t2 ON t1.staff_id = t2.id
+        WHERE
+            t2.merchant_id = #{merchantId}
+        AND t2.STATUS = 1
+        <if test="name!=null and name!='' ">
+            AND t2.NAME LIKE concat( "%", #{name}, "%" )
+        </if>
+        <if test="searchDate!=null and searchDate!='' ">
+            AND DATE_FORMAT( t1.create_date, "%Y-%m-%d" ) = DATE_FORMAT( #{searchDate}, "%Y-%m-%d" )
+        </if>
+        <if test="idCard!=null and idCard!='' ">
+            AND t2.id_card  LIKE concat( "%",#{idCard}, "%" )
+        </if>
+        <if test="department!=null and department!='' ">
+            AND t2.department_name = #{department}
+        </if>
+        <if test="phone!=null and phone!='' ">
+            AND t2.phone LIKE concat( "%",#{phone}, "%" )
+        </if>
+        limit #{currPage},#{pageSize}
+    </select>
+    <select id="getSignListCount" parameterType="com.lizhen.common.request.RequestBase" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            st_clock_in_record t1
+            LEFT JOIN de_staff t2 ON t1.staff_id = t2.id
+        WHERE
+        t2.merchant_id = #{merchantId}
+        AND t2.STATUS = 1
+        <if test="name!=null and name!='' ">
+            AND t2.NAME LIKE concat( "%", #{name}, "%" )
+        </if>
+        <if test="searchDate!=null and searchDate!='' ">
+            AND DATE_FORMAT( t1.create_date, "%Y-%m-%d" ) = DATE_FORMAT( #{searchDate}, "%Y-%m-%d" )
+        </if>
+        <if test="idCard!=null and idCard!='' ">
+            AND t2.id_card  LIKE concat( "%",#{idCard}, "%" )
+        </if>
+        <if test="department!=null and department!='' ">
+            AND t2.department_name = #{department}
+        </if>
+        <if test="phone!=null and phone!='' ">
+            AND t2.phone LIKE concat( "%",#{phone}, "%" )
+        </if>
+    </select>
+    <select id="getExportSignList" parameterType="com.lizhen.crm.api.dto.StClockInRecordDTO" resultType="java.util.LinkedHashMap">
+        SELECT
+        ifnull( t2.department_name, "无" ) departmentName,
+        ifnull( t2.name, "无" ) name,
+        if( (t2.phone is null or t2.phone=""), "无" ,t2.phone) phone,
+        ifnull( t2.social_no, "无" ) socialNo,
+        ifnull( t2.id_card, "无" ) idCard,
+        DATE_FORMAT( t1.create_date, "%Y-%m-%d %H:%i:%s" ) createDate
+        FROM
+        st_clock_in_record t1
+        LEFT JOIN de_staff t2 ON t1.staff_id = t2.id
+        WHERE
+        t2.merchant_id = #{merchantId}
+        AND t2.STATUS = 1
+        <if test="name!=null and name!='' ">
+            AND t2.NAME LIKE concat( "%", #{name}, "%" )
+        </if>
+        <if test="searchDate!=null and searchDate!='' ">
+            AND DATE_FORMAT( t1.create_date, "%Y-%m-%d" ) = DATE_FORMAT( #{searchDate}, "%Y-%m-%d" )
+        </if>
+        <if test="idCard!=null and idCard!='' ">
+            AND t2.id_card  LIKE concat( "%",#{idCard}, "%" )
+        </if>
+        <if test="department!=null and department!='' ">
+            AND t2.department_name = #{department}
+        </if>
+        <if test="phone!=null and phone!='' ">
+            AND t2.phone LIKE concat( "%",#{phone}, "%" )
+        </if>
+    </select>
+
+    <select id="getLearnList" parameterType="com.lizhen.common.request.RequestBase" resultType="com.lizhen.crm.api.dto.StLearnRecordProjectDTO">
+        SELECT
+        t1.id projectId,
+        t1.NAME projectName,
+        t3.id staffId,
+        t3.NAME staffName,
+        t3.phone,
+        t3.social_no socialNo,
+        t3.id_card idCard,
+        t4.learnTime learnTime,
+        t4.lessonTime  lessonTime,
+        DATE_FORMAT(t6.startTime, "%Y-%m-%d %H:%i:%s" ) startTime,
+        DATE_FORMAT(t5.finishTime , "%Y-%m-%d %H:%i:%s" ) finishTime
+        FROM
+        de_project_base t1
+        LEFT JOIN de_project_staff t2 ON t1.id = t2.project_id
+        LEFT JOIN de_staff t3 ON t2.staff_id = t3.id
+        LEFT JOIN (
+            SELECT
+            sum( learnTime ) learnTime,
+            sum( TRUNCATE(learnTime/45,1)) lessonTime,
+            t3.staff_id,
+            t1.project_id
+            FROM
+            de_project_lesson t1
+            LEFT JOIN de_class_lesson t2 ON t2.id = t1.lesson_id
+            LEFT JOIN (
+                SELECT
+                (sum( time ) div 60000) learnTime,
+                staff_id,
+                lesson_id
+                FROM
+                    (
+                    SELECT
+                    lesson_id,
+                    staff_id,
+                    chapter_id,
+                    max( t1.video_time ) time
+                    FROM
+                    st_view_record t1
+                    LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+                    GROUP BY
+                    staff_id,
+                    chapter_id,
+                    t2.lesson_id
+                    ) t
+                GROUP BY
+                lesson_id,
+                staff_id
+            ) t3 ON t2.class_id = t3.lesson_id
+            GROUP BY
+            t3.staff_id,
+            t1.project_id
+        ) t4 ON t1.id = t4.project_id
+        AND t2.staff_id = t4.staff_id
+        LEFT JOIN ( SELECT max( create_date ) finishTime, staff_id FROM st_view_record GROUP BY staff_id ) t5 ON t2.staff_id = t5.staff_id
+        LEFT JOIN ( SELECT min( create_date ) startTIme, staff_id FROM st_view_record GROUP BY staff_id ) t6 ON t2.staff_id = t6.staff_id
+        WHERE
+            t1.STATUS = 1
+        AND t3.STATUS = 1
+        AND t3.merchant_id = #{merchantId}
+        <if test="projectName!=null and projectName!='' ">
+            AND t1.NAME = #{projectName}
+        </if>
+        <if test="idCard!=null and idCard!='' ">
+            AND t3.id_card  LIKE concat( "%",#{idCard}, "%" )
+        </if>
+        <if test="staffName!=null">
+            AND t3.name LIKE concat( "%",#{staffName}, "%" )
+        </if>
+        <if test="phone!=null and phone!='' ">
+            AND t3.phone LIKE concat( "%",#{phone}, "%" )
+        </if>
+        limit #{currPage},#{pageSize}
+    </select>
+    <select id="getLearnListCount" parameterType="com.lizhen.common.request.RequestBase" resultType="int">
+        SELECT
+        count(*)
+        FROM
+        de_project_base t1
+        LEFT JOIN de_project_staff t2 ON t1.id = t2.project_id
+        LEFT JOIN de_staff t3 ON t2.staff_id = t3.id
+        WHERE
+        t1.STATUS = 1
+        AND t3.STATUS = 1
+        AND t3.merchant_id = #{merchantId}
+        <if test="projectName!=null and projectName!='' ">
+            AND t1.NAME = #{projectName}
+        </if>
+        <if test="idCard!=null and idCard!='' ">
+            AND t3.id_card  LIKE concat( "%",#{idCard}, "%" )
+        </if>
+        <if test="staffName!=null and staffName!='' ">
+            AND t3.name LIKE concat( "%",#{staffName}, "%" )
+        </if>
+        <if test="phone!=null and phone!='' ">
+            AND t3.phone LIKE concat( "%",#{phone}, "%" )
+        </if>
+    </select>
+
+    <select id="getExportLearnList" parameterType="com.lizhen.crm.api.dto.StLearnRecordProjectDTO" resultType="java.util.LinkedHashMap">
+        SELECT
+            t1.NAME projectName,
+            t3.NAME staffName,
+            ifnull( t3.phone, "无" ) phone,
+            ifnull( t3.social_no, "无" )  socialNo,
+            ifnull( t3.id_card, "无" ) idCard,
+            ifnull( t4.learnTime , 0 ) learnTime,
+            ifnull( t4.lessonTime , 0 ) lessonTime,
+            DATE_FORMAT( t6.startTime, "%Y-%m-%d %H:%i:%s" ) startTime,
+            DATE_FORMAT( t5.finishTime, "%Y-%m-%d %H:%i:%s" ) finishTime
+        FROM
+        de_project_base t1
+        LEFT JOIN de_project_staff t2 ON t1.id = t2.project_id
+        LEFT JOIN de_staff t3 ON t2.staff_id = t3.id
+        LEFT JOIN (
+            SELECT
+            sum( learnTime ) learnTime,
+            sum( TRUNCATE(learnTime/45,1)) lessonTime,
+            t3.staff_id,
+            t1.project_id
+            FROM
+            de_project_lesson t1
+            LEFT JOIN de_class_lesson t2 ON t2.id = t1.lesson_id
+            LEFT JOIN (
+                SELECT
+                (sum( time ) div 60000) learnTime,
+                staff_id,
+                lesson_id
+                FROM
+                    (
+                    SELECT
+                    lesson_id,
+                    staff_id,
+                    chapter_id,
+                    max( t1.video_time ) time
+                    FROM
+                    st_view_record t1
+                    LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+                    GROUP BY
+                    staff_id,
+                    chapter_id,
+                    t2.lesson_id
+                    ) t
+                GROUP BY
+                lesson_id,
+                staff_id
+            ) t3 ON t2.class_id = t3.lesson_id
+            GROUP BY
+            t3.staff_id,
+            t1.project_id
+        ) t4 ON t1.id = t4.project_id
+        AND t2.staff_id = t4.staff_id
+        LEFT JOIN ( SELECT max( create_date ) finishTime, staff_id FROM st_view_record GROUP BY staff_id ) t5 ON t2.staff_id = t5.staff_id
+        LEFT JOIN ( SELECT min( create_date ) startTIme, staff_id FROM st_view_record GROUP BY staff_id ) t6 ON t2.staff_id = t6.staff_id
+        WHERE
+        t1.STATUS = 1
+        AND t3.STATUS = 1
+        AND t3.merchant_id = #{merchantId}
+        <if test="projectName!=null and projectName!='' ">
+            AND t1.NAME = #{projectName}
+        </if>
+        <if test="idCard!=null and idCard!='' ">
+            AND t3.id_card  LIKE concat( "%",#{idCard}, "%" )
+        </if>
+        <if test="staffName!=null and staffName!='' ">
+            AND t3.name LIKE concat( "%",#{staffName}, "%" )
+        </if>
+        <if test="phone!=null and phone!='' ">
+            AND t3.phone LIKE concat( "%",#{phone}, "%" )
+        </if>
+    </select>
+
+    <select id="getLearnDetailList" parameterType="int" resultType="java.util.LinkedHashMap">
+        SELECT
+            t1.NAME projectName,
+            t3.NAME staffName,
+            ifnull( t3.phone, "无" ) phone,
+            ifnull( t3.social_no, "无" )  socialNo,
+            ifnull( t3.id_card, "无" )  idCard,
+            ifnull( t5.NAME , "无" ) className,
+            ifnull( t5.class_time , 0 ) classTime,
+            ifnull( t6.videoTime DIV 60000, 0 ) learnTime,
+            concat( ifnull( t6.videoTime * 100 DIV t5.video_time, 0 ), "%" ) clearRate,
+            IF( ( t6.videoTime / t5.video_time ) > 0.95, "已完成", "未完成" ) STATUS,
+            DATE_FORMAT(t7.startTime, "%Y-%m-%d %H:%i:%s" ) startTime,
+            DATE_FORMAT(t8.finishTime , "%Y-%m-%d %H:%i:%s" ) finishTime
+        FROM
+            de_project_base t1
+            LEFT JOIN de_project_staff t2 ON t1.id = t2.project_id
+            LEFT JOIN de_staff t3 ON t2.staff_id = t3.id
+            LEFT JOIN de_project_lesson t4 ON t1.id = t4.project_id
+            LEFT JOIN de_class_lesson t5 ON t5.id = t4.lesson_id
+            LEFT JOIN (
+            SELECT
+                sum( time ) videoTime,
+                staff_id,
+                lesson_id
+            FROM
+                (
+                SELECT
+                    lesson_id,
+                    staff_id,
+                    chapter_id,
+                    max( t1.video_time ) time
+                FROM
+                    st_view_record t1
+                    LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+                GROUP BY
+                    staff_id,
+                    chapter_id,
+                    t2.lesson_id
+                ) t
+            GROUP BY
+                lesson_id,
+                staff_id
+            ) t6 ON t5.class_id = t6.lesson_id
+            AND t3.id = t6.staff_id
+            LEFT JOIN (
+            SELECT
+                min( t1.create_date ) startTime,
+                t1.staff_id,
+                t2.lesson_id
+            FROM
+                st_view_record t1
+                LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+            GROUP BY
+                t1.staff_id,
+                t2.lesson_id
+            ) t7 ON t7.lesson_id = t5.class_id
+            AND t7.staff_id = t3.id
+            LEFT JOIN (
+            SELECT
+                max( t1.create_date ) finishTime,
+                t1.staff_id,
+                t2.lesson_id
+            FROM
+                st_view_record t1
+                LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+            GROUP BY
+                t1.staff_id,
+                t2.lesson_id
+            ) t8 ON t8.lesson_id = t5.class_id
+            AND t8.staff_id = t3.id
+        WHERE
+        t1.STATUS = 1
+        AND t3.STATUS = 1
+        AND t1.merchant_id = #{merchantId}
+    </select>
+
+    <select id="getStaffLearnList" parameterType="com.lizhen.common.request.RequestBase" resultType="com.lizhen.crm.api.dto.StLearnRecordLessonDTO">
+        SELECT
+            t5.NAME  lessonName,
+            t5.minutes  lessonTime,
+            ifnull( t6.videoTime DIV 60000, 0 ) learnTime,
+            ifnull( TRUNCATE(t6.videoTime/2700000,1), 0 ) getLessonTime,
+            IF( ( t6.videoTime / t5.video_time ) > 0.95, "已完成", "未完成" ) status,
+            DATE_FORMAT(t7.startTime, "%Y-%m-%d %H:%i:%s" ) startTime,
+            DATE_FORMAT(t8.finishTime , "%Y-%m-%d %H:%i:%s" ) finishTime
+        FROM
+            de_project_base t1
+            LEFT JOIN de_project_staff t2 ON t1.id = t2.project_id
+            LEFT JOIN de_staff t3 ON t2.staff_id = t3.id
+            LEFT JOIN de_project_lesson t4 ON t1.id = t4.project_id
+            LEFT JOIN de_class_lesson t5 ON t5.id = t4.lesson_id
+            LEFT JOIN (
+            SELECT
+                sum( time ) videoTime,
+                staff_id,
+                lesson_id
+            FROM
+                (
+                SELECT
+                    lesson_id,
+                    staff_id,
+                    chapter_id,
+                    max( t1.video_time ) time
+                FROM
+                    st_view_record t1
+                    LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+                GROUP BY
+                    staff_id,
+                    chapter_id,
+                    t2.lesson_id
+                ) t
+            GROUP BY
+                lesson_id,
+                staff_id
+            ) t6 ON t5.class_id = t6.lesson_id
+            AND t3.id = t6.staff_id
+            LEFT JOIN (
+            SELECT
+                min( t1.create_date ) startTime,
+                t1.staff_id,
+                t2.lesson_id
+            FROM
+                st_view_record t1
+                LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+            GROUP BY
+                t1.staff_id,
+                t2.lesson_id
+            ) t7 ON t7.lesson_id = t5.class_id
+            AND t7.staff_id = t3.id
+            LEFT JOIN (
+            SELECT
+                max( t1.create_date ) finishTime,
+                t1.staff_id,
+                t2.lesson_id
+            FROM
+                st_view_record t1
+                LEFT JOIN mg_class_chapter t2 ON t1.chapter_id = t2.id
+            GROUP BY
+                t1.staff_id,
+                t2.lesson_id
+            ) t8 ON t8.lesson_id = t5.class_id
+            AND t8.staff_id = t3.id
+        WHERE
+        t1.STATUS = 1
+        AND t3.STATUS = 1
+        AND t1.merchant_id = #{merchantId}
+        AND t1.id = #{projectId}
+        AND t3.id = #{staffId}
+    </select>
+</mapper>

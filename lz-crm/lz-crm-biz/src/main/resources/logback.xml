@@ -1,0 +1,95 @@
+<configuration>
+
+    <!-- error log start -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/crm-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/crm-error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%level|%logger{1}|%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--<logger name="com.lizhen.jxs.biz" level="INFO" additivity="false">-->
+        <!--<appender-ref ref="ERROR"/>-->
+    <!--</logger>-->
+    <!-- error log end -->
+
+
+    <!-- stdout log start -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!--<file>logs/stdout.log</file>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+            <!--<fileNamePattern>logs/stdout.log.%d{yyyy-MM-dd}.gz</fileNamePattern>-->
+            <!--<maxHistory>7</maxHistory>-->
+        <!--</rollingPolicy>-->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%level|%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.lizhen.jxs.biz" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!-- stdout log end -->
+
+    <!-- sql log start -->
+    <appender name="SQL" class="ch.qos.logback.core.ConsoleAppender">
+        <!--<file>logs/sql.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/sql.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>-->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="sql" level="INFO" additivity="false">
+        <appender-ref ref="SQL"/>
+    </logger>
+    <!-- sql log end -->
+
+    <!-- druid log start -->
+    <appender name="DRUID" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/crm-druid.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/crm-druid.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.alibaba.druid" level="INFO" additivity="false">
+        <appender-ref ref="DRUID"/>
+    </logger>
+    <!-- druid log end -->
+
+    <!-- metrics log start -->
+    <appender name="METRICS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/crm-metrics.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/crm-metrics.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.lizhen.jxs.admin.common.stat" level="INFO" additivity="false">
+        <appender-ref ref="METRICS"/>
+    </logger>
+    <!-- metrics log end -->
+
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ERROR"/>
+    </root>
+
+</configuration>

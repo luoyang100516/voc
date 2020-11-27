@@ -1,0 +1,34 @@
+spring:
+  profiles:
+    active: local
+#    active: prod
+#    active: sit
+#    active: dev
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
+system:
+    encryptJWTKey: U0JBUElKV1RkV2FuZzkyNjQ1NA==
+    encryptAESKey: V2FuZzkyNjQ1NGRTQkFQSUpXVA==
+    accessTokenExpireTime: 43200
+#mybatis:
+  #type-aliases-package: com.lizhen.kernel.model
+#  mapper-locations: classpath*:mappers/**/*.xml
+#  mappers: com.lizhen.kernel.dao
+#  identity: MYSQL
+
+mybatis-plus:
+  mapper-locations: classpath:/mappers/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

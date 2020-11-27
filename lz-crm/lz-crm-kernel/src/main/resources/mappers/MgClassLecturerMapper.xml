@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.MgClassLecturerMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.lizhen.crm.api.entity2.MgClassLecturer" id="mgClassLecturerMap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="label" column="label"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+    <select id="getAllLecturer" resultMap="mgClassLecturerMap">
+        select * from mg_class_lecturer where status = 1
+    </select>
+    <select id="getLastCode" resultType="java.lang.String">
+        select code from mg_class_lecturer order by id desc limit 1
+    </select>
+</mapper>

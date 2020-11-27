@@ -1,0 +1,90 @@
+# Tomcat
+#server:
+#  port: 8083
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://39.108.10.55:8081/voc_edu?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 123456
+    initialSize: 10
+    minIdle: 10
+    maxActive: 200
+    # 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 配置监控统计拦截的filters
+    filters: stat,wall,slf4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  resources:
+    static-locations: classpath:/static/,classpath:/views/
+  #redis
+  redis:
+    database: 0
+    host: localhost
+    password:
+    timeout: 2000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+    local:
+      host: localhost
+#      host: 101.132.134.161
+      port: 6379
+  dubbo:
+    application:
+      name: lz-crm-provider
+      id: lz-crm-provider-id
+    server: true
+    registry:
+#      address: zookeeper://192.168.247.128
+      address: zookeeper://localhost
+      port: 2181
+      filter: dubboServiceFilter
+    protocol:
+      name: dubbo
+      port: 27893
+    scan: com.lizhen.crm.biz.impl
+    aop:
+      auto: true
+
+
+
+#qn:
+#  accessKey: CxCd8A7KZHPVckebezlwYT6gFtx5VJ5jj_jnRvxX
+#  secretKey: 2tCORDrU-VT9Pn8xuWjNlEhxd0PG6nHS8w59i-Ud
+#  imageBucket: ly-voc
+#  videoBucket: ly-voc-video
+#  remoteUrl: http://qfd0rxv55.hn-bkt.clouddn.com/
+
+qn:
+  accessKey: b55AcloPo7Bj5CBK-k2xpRw5ODnmIZv3MWxG7VK-
+  secretKey: MdnSrHlo2-lDmXva8OwcVmdQ_DR764tpnR5jsuBV
+  imageBucket: shwosi-image
+  videoBucket: shwosi
+  remoteUrl: http://video.zhiyeyun.com.cn
+  remoteImageUrl: http://image.zhiyeyun.com.cn/
+
+logging:
+  file: ./logs/jxs-user.log
+  level.com.*: debug
+

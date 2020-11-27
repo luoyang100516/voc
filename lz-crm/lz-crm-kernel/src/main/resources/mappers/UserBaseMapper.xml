@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lizhen.crm.kernel.dao.UserBaseMapper">
+  <resultMap id="BaseResultMap" type="com.lizhen.crm.api.entity.UserBase">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="job_number" jdbcType="VARCHAR" property="jobNumber" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="obj_remark" jdbcType="VARCHAR" property="objRemark" />
+    <result column="obj_status" jdbcType="INTEGER" property="objStatus" />
+    <result column="obj_createdate" jdbcType="TIMESTAMP" property="objCreatedate" />
+    <result column="obj_createuser" jdbcType="INTEGER" property="objCreateuser" />
+    <result column="obj_modifydate" jdbcType="TIMESTAMP" property="objModifydate" />
+    <result column="obj_modifyuser" jdbcType="INTEGER" property="objModifyuser" />
+    <result column="role_status" jdbcType="INTEGER" property="roleStatus" />
+  </resultMap>
+    <select id="getMenus" resultType="com.lizhen.crm.api.entity.MenuBase">
+        SELECT
+            m.id,
+            m.name,
+            m.url,
+            m.type,
+            m.icon,
+            m.sort,
+            m.parent_id AS parentId
+        FROM
+            mg_user_base u
+        INNER JOIN mg_role r ON u.role_id = r.id
+        INNER JOIN mg_role_menu rm ON r.id = rm.role_id
+        INNER JOIN mg_menu m ON rm.menu_id = m.id
+        where u.id = #{ userId } and r.status = 1 order by  m.sort
+  </select>
+  <select id="getUserCount" resultType="java.lang.Integer">
+        SELECT
+          count(*)
+        FROM
+      mg_user_base where 1=1
+      <if test="name!=null and name!='' ">
+          AND name LIKE CONCAT('%',#{name},'%')
+      </if>
+      <if test="phone!=null and phone!='' ">
+          AND phone LIKE CONCAT('%',#{phone},'%')
+      </if>
+      <if test="status!=null ">
+          AND status =#{ status }
+      </if>
+      <if test="objCreatedate!=null and objCreatedate!='' ">
+          AND  DATE_FORMAT(obj_createdate, '%Y-%m-%d') = #{ objCreatedate }
+      </if>
+  </select>
+
+  <select id="selectByAccount" resultMap="BaseResultMap">
+    SELECT
+        u.id,u.name,u.account,u.password,u.role_id,u.phone,u.status,u.type
+    FROM
+      mg_user_base u
+    WHERE  1=1
+   <if test="account!=null and account!='' ">
+          AND u.account=#{ account }
+   </if>
+   <if test="id!=null and id!='' ">
+          AND u.id=#{ id }
+   </if>
+   <if test="phone!=null and phone!='' ">
+          AND u.phone=#{ phone }
+   </if>
+  </select>
+
+   <select id="getUserRole" resultMap="BaseResultMap" >
+    SELECT
+        m.id,m.name,m.account,m.password, m.role_id, m.status  , n.name as role_name ,n.status as role_status
+    FROM
+       mg_user_base m left join mg_role n on ( m.role_id  = n.id )
+    WHERE  1=1
+   <if test="account!=null and account!='' ">
+          AND m.account=#{ account }
+   </if>
+   <if test="phone!=null and phone!='' ">
+       AND m.phone=#{ phone }
+   </if>
+   <if test="id!=null and id!='' ">
+          AND m.id=#{ id }
+   </if>
+  </select>
+
+
+  <select id="getUserList" resultMap="BaseResultMap">
+    SELECT
+        id,type,factory_id,account,password,role_id,name,phone,email,sex,obj_remark,status, obj_status, obj_createdate, obj_createuser, obj_modifydate, obj_modifyuser
+        FROM
+      mg_user_base
+      where 1=1
+      <if test="name!=null and name!='' ">
+          AND name LIKE CONCAT('%',#{name},'%')
+      </if>
+      <if test="phone!=null and phone!='' ">
+          AND phone LIKE CONCAT('%',#{phone},'%')
+      </if>
+      <if test="status!=null ">
+          AND status =#{ status }
+      </if>
+      <if test="objCreatedate!=null and objCreatedate!='' ">
+          AND  DATE_FORMAT(obj_createdate, '%Y-%m-%d') = #{ objCreatedate }
+      </if>
+      <if test="roleId!=null and roleId!='' ">
+          AND role_id=#{ roleId }
+      </if>
+      <if test="start!=null and pageSize!=null ">
+          limit  #{ start } ,#{ pageSize }
+      </if>
+  </select>
+
+   <update id="updateUserBase">
+      update  mg_user_base
+       <set>
+           <if test="name!=null and name!='' ">
+               name = #{name},
+           </if>
+           <if test="status!=null ">
+               status = #{status},
+           </if>
+           <if test="phone!=null and phone!='' ">
+               phone = #{phone},
+           </if>
+           <if test="account!=null and account!='' ">
+               account = #{account},
+           </if>
+           <if test="roleId!=null and roleId!='' ">
+               role_id = #{roleId},
+           </if>
+           <if test="factoryId!=null and factoryId!='' ">
+               factory_id = #{factoryId},
+           </if>
+           <if test="password!=null and password!='' ">
+               password = #{ password },
+           </if>
+           <if test="type!=null and type!='' ">
+               type = #{type},
+           </if>
+       </set>
+      where id=#{id}
+   </update>
+
+    <update id="updateUserByPhone">
+        update  mg_user_base
+        <set>
+            <if test="password!=null and password!='' ">
+                password = #{ password },
+            </if>
+        </set>
+        where
+        1=1
+        <if test="account!=null and account!='' ">
+            and account = #{ account }
+        </if>
+        <if test="phone!=null and phone!='' ">
+            and phone=#{phone}
+        </if>
+    </update>
+
+   <insert id="newUserBase">
+      INSERT INTO  mg_user_base ( name ,phone ,role_id ,account, password ,status ,factory_id ,type ) VALUES ( #{ name } , #{ phone }, #{ roleId }, #{ account }, #{ password }, #{ status }, #{ factoryId } ,#{ type })
+   </insert>
+
+   <update id="updateUserByRoleId">
+        update  mg_user_base set role_id = null where id=#{id}
+    </update>
+
+</mapper>

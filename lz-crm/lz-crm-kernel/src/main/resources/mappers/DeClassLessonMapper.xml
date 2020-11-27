@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.DeClassLessonMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.lizhen.crm.api.entity.DeClassLesson" id="deClassLessonMap">
+        <result property="id" column="id"/>
+        <result property="classId" column="class_id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="label" column="label"/>
+        <result property="description" column="description"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="status" column="status"/>
+        <result property="lecId" column="lec_id"/>
+        <result property="lecName" column="lec_name"/>
+        <result property="videoTime" column="video_time"/>
+        <result property="classTime" column="class_time"/>
+        <result property="minutes" column="minutes"/>
+        <result property="chapterCount" column="chapter_count"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+    <select id="selectLessonIds" parameterType="int" resultType="int">
+        select class_id from de_class_lesson where merchant_id = #{merchantId}
+    </select>
+
+</mapper>

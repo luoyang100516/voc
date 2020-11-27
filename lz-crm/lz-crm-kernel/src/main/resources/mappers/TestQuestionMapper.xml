@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lizhen.crm.kernel.dao.TestQuestionMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.lizhen.crm.api.entity.TestQuestion" id="testQuestionMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="type" column="type"/>
+        <result property="answer" column="answer"/>
+        <result property="score" column="score"/>
+        <result property="status" column="status"/>
+        <result property="label" column="label"/>
+        <result property="lesson" column="lesson"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+
+    <!--<insert id="insertRelation" parameterType="map">
+        insert into test_question_lesson
+        (lesson_id , question_id) values
+        <foreach collection="ids" item="item" separator=",">
+            (#{item},#{id})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRelation" parameterType="int">
+        delete from test_question_lesson where question_id = #{id}
+    </delete>
+    <select id="getQuestionIds" parameterType="int" resultType="int">
+        select question_id from test_question_lesson where lesson_id = #{id}
+    </select>-->
+
+    <select id="selectIds" parameterType="int" resultType="int">
+        select question_id from test_relation where paper_id = #{id}
+    </select>
+
+</mapper>
