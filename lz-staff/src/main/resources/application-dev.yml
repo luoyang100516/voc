@@ -11,6 +11,8 @@ server:
       key-alias: cloudkey
   #    配置密码，就是在生成证书的时候输入的密码
       key-store-password: cloudkey
+  tomcat:
+    basedir: /usr/local/vocation/temp
 spring:
   aop:
     proxy-target-class: true

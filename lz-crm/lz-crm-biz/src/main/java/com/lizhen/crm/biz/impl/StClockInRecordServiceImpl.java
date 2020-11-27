@@ -15,12 +15,14 @@ import com.lizhen.crm.api.entity2.MgClassChapter;
 import com.lizhen.crm.api.service.StClockInRecordService;
 import com.lizhen.crm.kernel.dao.StClockInRecordMapper;
 import com.lizhen.crm.kernel.dao.StViewRecordMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
 
 @Service
+@Slf4j
 public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMapper, StClockInRecord> implements StClockInRecordService {
 
     @Autowired
@@ -38,6 +40,7 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
     @Override
     public void addViewRecord() {
         List<StProjectDTO> staffList= this.baseMapper.getStaffProject();
+        log.info("-----------本次NFC打卡员工数："+staffList.size());
         Integer projectId = 0;
         Calendar cal0 = Calendar.getInstance();
         cal0.setTime(new Date());
@@ -56,6 +59,7 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
             if(staff.getProjectId()!=projectId) {
                 projectId = staff.getProjectId();
                 chapterList = this.baseMapper.getProjectChapter(projectId);
+                log.info("-----------项目id："+projectId+"-----章节数："+chapterList.size());
             }
             Integer firstChapter = 0;
             Integer chapterId = this.baseMapper.getStaffLastChapter(staff.getStaffId());
@@ -93,6 +97,7 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
                     }
                 }
             }
+            log.info("-----------插入条目数"+records.size());
             if(records.size()!=0){
                 viewRecordMapper.insertBatch(records);
             }

@@ -2,8 +2,7 @@
 http:
     port: 8443
 server:
-#  port: 8087
-  port: 8055
+  port: 8090
   ssl:
       enabled : false #是否启用https
   #    证书路径
@@ -15,8 +14,8 @@ server:
   tomcat:
     basedir: /usr/local/vocation/temp
 spring:
-#  tomcat:
-#    basedir: /data/tomcat
+  aop:
+    proxy-target-class: true
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
@@ -25,7 +24,7 @@ spring:
   #redis
   redis:
     database: 0
-    host: 127.0.0.1
+    host: localhost
     password:
     timeout: 2000
     lettuce:
@@ -35,16 +34,17 @@ spring:
         max-idle: 8
         min-idle: 0
     local:
-      host: 127.0.0.1
+      host: localhost
 #      host: 101.132.134.161
       port: 6379
 dubbo:
   registry:
     protocol: zookeeper
-    address: 127.0.0.1:2181
+#    address: 192.168.247.128:2181
+    address: localhost:2181
     timeout: 10000
     check: false
-    #filter: dubboServiceFilter
+    filter: dubboServiceFilter
   admin:
     username:
     password:
@@ -52,36 +52,35 @@ dubbo:
     name: dubbo
     port:
   application:
-    name: lz-cloud
+    name: lz-staff-wx
+    qos-enable: false
   consumer:
     timeout: 60000
     check: false
   aop:
     proxy-target-class: true
-    auto: true
-lizhen:
-  upload:
-    prefix: lizhen/dealeroa
-    remote:
-      path: http://101.132.134.161:8089/
-    local:
-      path: /usr/local/jxsoa_document/
-  download:
-    file:
-      remote:
-        path: http://101.132.134.161:80/files/
-      local:
-        path: /usr/local/jxsoa_document/
-  #用户默认头像
-  head:
-    url: http://101.132.134.161:8089/files/head/head.png
-  #会议室配置
-  meetRoom:
-    partition:
-      size: 24
-      lastTime: "20:30"
+
+
+
+#qn:
+#  accessKey: CxCd8A7KZHPVckebezlwYT6gFtx5VJ5jj_jnRvxX
+#  secretKey: 2tCORDrU-VT9Pn8xuWjNlEhxd0PG6nHS8w59i-Ud
+#  imageBucket: ly-voc
+#  videoBucket: ly-voc-video
+#  remoteUrl: http://qfd0rxv55.hn-bkt.clouddn.com/
+
+qn:
+  accessKey: b55AcloPo7Bj5CBK-k2xpRw5ODnmIZv3MWxG7VK-
+  secretKey: MdnSrHlo2-lDmXva8OwcVmdQ_DR764tpnR5jsuBV
+  imageBucket: shwosi-image
+  videoBucket: shwosi
+  remoteUrl: http://video.zhiyeyun.com.cn
+  remoteImageUrl: http://image.zhiyeyun.com.cn/
+
+
 logging:
   file: ./logs/lizhen-cloud.log
-  level.com.*: info
+  level.com.*: debug
+
 
 
