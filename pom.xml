@@ -17,6 +17,7 @@
 	<description>lizhen cloud</description>
 
     <modules>
+        <module>lz-staff-wx</module>
         <module>lz-staff</module>
         <module>lz-dealer</module>
         <module>lz-web</module>

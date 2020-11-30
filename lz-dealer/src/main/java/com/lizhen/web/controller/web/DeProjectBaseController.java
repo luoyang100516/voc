@@ -123,14 +123,14 @@ public class DeProjectBaseController {
         return  new DataResponse();
     }
 
-    /**
-     * 修改项目试卷
-     */
-    @RequestMapping("/updateProjectPaper")
-    public DataResponse updateProjectPaper(RequestBase requestBase){
-        deProjectBaseService.updateProjectPaper(requestBase);
-        return  new DataResponse();
-    }
+//    /**
+//     * 修改项目试卷
+//     */
+//    @RequestMapping("/updateProjectPaper")
+//    public DataResponse updateProjectPaper(RequestBase requestBase){
+//        deProjectBaseService.updateProjectPaper(requestBase);
+//        return  new DataResponse();
+//    }
 
 
     /**

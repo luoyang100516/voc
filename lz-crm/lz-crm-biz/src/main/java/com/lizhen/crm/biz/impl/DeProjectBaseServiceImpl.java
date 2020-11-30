@@ -100,17 +100,8 @@ public class DeProjectBaseServiceImpl extends ServiceImpl<DeProjectBaseMapper, D
     }
 
     @Override
-    public void addProjectPaper(RequestBase requestBase) {
-        String paperIds = requestBase.getIds();
-        if (paperIds != null) {
-            List<Integer> ids = StringUtil.splitToIntList(paperIds,",");
-            this.baseMapper.insertPaperRelation(requestBase.getId(),ids);
-        }
-    }
-
-    @Override
     @Transactional
-    public void updateProjectPaper(RequestBase requestBase) {
+    public void addProjectPaper(RequestBase requestBase) {
         String paperIds = requestBase.getIds();
         if (paperIds != null) {
             this.baseMapper.deletePaperRelation(requestBase.getId());
@@ -118,6 +109,17 @@ public class DeProjectBaseServiceImpl extends ServiceImpl<DeProjectBaseMapper, D
             this.baseMapper.insertPaperRelation(requestBase.getId(),ids);
         }
     }
+
+//    @Override
+//    @Transactional
+//    public void updateProjectPaper(RequestBase requestBase) {
+//        String paperIds = requestBase.getIds();
+//        if (paperIds != null) {
+//            this.baseMapper.deletePaperRelation(requestBase.getId());
+//            List<Integer> ids = StringUtil.splitToIntList(paperIds,",");
+//            this.baseMapper.insertPaperRelation(requestBase.getId(),ids);
+//        }
+//    }
 
     @Override
     public List<DeProjectBase> getProjectList(DeStaff deStaff) {

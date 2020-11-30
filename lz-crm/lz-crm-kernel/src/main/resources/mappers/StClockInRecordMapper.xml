@@ -25,7 +25,7 @@
 	from de_project_staff t1
 	inner JOIN
 	( SELECT * FROM st_nfc_clock_in_record
-	WHERE create_date BETWEEN date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 8 HOUR )
+	WHERE create_date BETWEEN date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 6 HOUR )
 	 and date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 11 HOUR ) )
 	 t2 ON t1.staff_id = t2.staff_id
 	ORDER BY t1.project_id

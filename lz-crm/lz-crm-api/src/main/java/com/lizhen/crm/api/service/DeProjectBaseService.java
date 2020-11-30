@@ -30,7 +30,7 @@ public interface DeProjectBaseService extends IService<DeProjectBase> {
 
     void addProjectPaper(RequestBase requestBase);
 
-    void updateProjectPaper(RequestBase requestBase);
+//    void updateProjectPaper(RequestBase requestBase);
 
     List<DeProjectBase> getProjectList(DeStaff deStaff);
 
