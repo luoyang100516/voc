@@ -26,6 +26,8 @@ public interface StClockInRecordMapper extends BaseMapper<StClockInRecord> {
 
     List<StProjectDTO> getStaffProject();
 
+    List<StProjectDTO> getStaffProject2();
+
     List<MgClassChapter> getProjectChapter(@Param("projectId")Integer projectId);
 
     Integer getStaffLastChapter(@Param("staffId")Integer staffId);

@@ -14,10 +14,17 @@ public class SaticScheduleTask {
     @Reference
     private StClockInRecordService clockInRecordService;
 //    @Scheduled(cron = "0/20 * * * * ? ")
-    @Scheduled(cron = "0 0 23 * * ?")
+    @Scheduled(cron = "0 0 13 * * ?")
     private void startTaskStorage() {
         log.info("--------------进入定时任务抓取打卡员工-----------");
         clockInRecordService.addViewRecord();
+        log.info("--------------完成定时任务----------------------");
+    }
+
+    @Scheduled(cron = "0 0 23 * * ?")
+    private void startTaskStorage2() {
+        log.info("--------------进入定时任务抓取打卡员工-----------");
+        clockInRecordService.addViewRecord2();
         log.info("--------------完成定时任务----------------------");
     }
 

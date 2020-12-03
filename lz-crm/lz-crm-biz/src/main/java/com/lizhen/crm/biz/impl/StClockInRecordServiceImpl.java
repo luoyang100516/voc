@@ -40,19 +40,27 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
     @Override
     public void addViewRecord() {
         List<StProjectDTO> staffList= this.baseMapper.getStaffProject();
+        if(staffList.size()!=0){
+            addRecords(staffList, 14);
+        }
+    }
+
+    @Override
+    public void addViewRecord2() {
+        List<StProjectDTO> staffList= this.baseMapper.getStaffProject2();
+        if(staffList.size()!=0){
+            addRecords(staffList, 20);
+        }
+    }
+
+    private void addRecords(List<StProjectDTO> staffList, int i) {
         log.info("-----------本次NFC打卡员工数："+staffList.size());
         Integer projectId = 0;
         Calendar cal0 = Calendar.getInstance();
         cal0.setTime(new Date());
         cal0.set(Calendar.MINUTE,0);
-        cal0.set(Calendar.HOUR_OF_DAY,11);
-        Date time11 = cal0.getTime();
-        cal0.set(Calendar.HOUR_OF_DAY,14);
-        Date time14 = cal0.getTime();
-        cal0.set(Calendar.HOUR_OF_DAY,19);
-        Date time19 = cal0.getTime();
-        cal0.set(Calendar.HOUR_OF_DAY,23);
-        Date time23 = cal0.getTime();
+        cal0.set(Calendar.HOUR_OF_DAY, i);
+        Date endTime = cal0.getTime();
 
         List<MgClassChapter> chapterList = new ArrayList<>();
         for(StProjectDTO staff : staffList){
@@ -68,7 +76,7 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
             }
             Random random = new Random();
             List<StViewRecord> records = new ArrayList<>();
-            Date startDate = time11;
+            Date startDate = staff.getCreateTime();
             for(MgClassChapter chapter :chapterList){
                 if(chapter.getId()>firstChapter){
                     StViewRecord startRecord = new StViewRecord();
@@ -88,11 +96,9 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
                     endRecord.setCreateDate(end);
                     records.add(startRecord);
                     records.add(endRecord);
-                    if(end.getTime()<time14.getTime()||(end.getTime()>time19.getTime()&&end.getTime()<time23.getTime())){
+                    if(end.getTime()<endTime.getTime()){
                         startDate = end;
-                    }else if(end.getTime()>time14.getTime()&&end.getTime()<time19.getTime()){
-                        startDate = time19;
-                    }else if(end.getTime()>time23.getTime()){
+                    } else {
                         break;
                     }
                 }
@@ -101,7 +107,6 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
             if(records.size()!=0){
                 viewRecordMapper.insertBatch(records);
             }
-
         }
     }
 

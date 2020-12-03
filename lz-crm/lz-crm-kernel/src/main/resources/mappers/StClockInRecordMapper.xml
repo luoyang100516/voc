@@ -21,12 +21,22 @@
   </insert>
 
     <select id="getStaffProject" resultType="com.lizhen.crm.api.dto.StProjectDTO">
-	select t1.project_id projectId,t1.staff_id staffId
+	select t1.project_id projectId,t1.staff_id staffId,t2.create_date createTime
 	from de_project_staff t1
 	inner JOIN
-	( SELECT * FROM st_nfc_clock_in_record
-	WHERE create_date BETWEEN date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 6 HOUR )
-	 and date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 11 HOUR ) )
+	( SELECT staff_id,min(create_date) create_date FROM st_nfc_clock_in_record
+	WHERE create_date BETWEEN date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 11 HOUR )
+	 and date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 14 HOUR ) GROUP BY staff_id )
+	 t2 ON t1.staff_id = t2.staff_id
+	ORDER BY t1.project_id
+    </select>
+    <select id="getStaffProject2" resultType="com.lizhen.crm.api.dto.StProjectDTO">
+	select t1.project_id projectId,t1.staff_id staffId,t2.create_date createTime
+	from de_project_staff t1
+	inner JOIN
+	( SELECT staff_id,min(create_date) create_date FROM st_nfc_clock_in_record
+	WHERE create_date BETWEEN date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 17 HOUR )
+	 and date_add( date_format( now(), "%Y-%m-%d" ), INTERVAL 20 HOUR ) GROUP BY staff_id )
 	 t2 ON t1.staff_id = t2.staff_id
 	ORDER BY t1.project_id
     </select>

@@ -3,6 +3,7 @@ package com.lizhen.crm.api.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
@@ -23,5 +24,7 @@ public class StProjectDTO implements Serializable {
 	 * 员工id
 	 */
 	private Integer staffId;
+
+	private Date createTime;
 
 }

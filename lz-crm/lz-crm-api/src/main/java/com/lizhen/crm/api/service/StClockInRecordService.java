@@ -21,6 +21,8 @@ public interface StClockInRecordService extends IService<StClockInRecord> {
 
     void addViewRecord();
 
+    void addViewRecord2();
+
     DataResponse addNFCSignRecord(StaffNFC staffNFC);
 }
 
