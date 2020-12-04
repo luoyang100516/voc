@@ -62,12 +62,22 @@ public class LoginController {
     @RequestMapping("/updateStaff")
     public DataResponse updateStaff(DeStaff staffDTO){
         DeStaff staff = UserUtil.getCurrentStaff();
-        staff.setEmail(staffDTO.getEmail());
-        staff.setPhone(staffDTO.getPhone());
-        staff.setName(staffDTO.getName());
-        staff.setAccount(PinYinUtil.toPinyin(staffDTO.getName()));
-        staff.setIdCard(staff.getIdCard());
-        staff.setHeadImage(staffDTO.getHeadImage());
+        if(staffDTO.getEmail()!=null){
+            staff.setIdCard(staff.getEmail());
+        }
+        if(staffDTO.getPhone()!=null){
+            staff.setIdCard(staff.getPhone());
+        }
+        if(staffDTO.getName()!=null){
+            staff.setName(staffDTO.getName());
+            staff.setAccount(PinYinUtil.toPinyin(staffDTO.getName()));
+        }
+        if(staffDTO.getIdCard()!=null){
+            staff.setIdCard(staff.getIdCard());
+        }
+        if(staffDTO.getHeadImage()!=null){
+            staff.setHeadImage(staffDTO.getHeadImage());
+        }
         deStaffService.updateById(staff);
         return  new DataResponse();
     }
