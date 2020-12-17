@@ -87,6 +87,9 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
                     cal0.add(Calendar.SECOND,random.nextInt(1000));
                     Date start = cal0.getTime();
                     startRecord.setCreateDate(start);
+                    if(start.getTime()>endTime.getTime()){
+                        break;
+                    }
                     StViewRecord endRecord = new StViewRecord();
                     endRecord.setChapterId(chapter.getId());
                     endRecord.setStaffId(staff.getStaffId());
@@ -96,11 +99,11 @@ public class StClockInRecordServiceImpl extends ServiceImpl<StClockInRecordMappe
                     endRecord.setCreateDate(end);
                     records.add(startRecord);
                     records.add(endRecord);
-                    if(end.getTime()<endTime.getTime()){
-                        startDate = end;
-                    } else {
-                        break;
-                    }
+//                    if(end.getTime()<endTime.getTime()){
+                    startDate = end;
+//                    } else {
+//                        break;
+//                    }
                 }
             }
             log.info("-----------插入条目数"+records.size());

@@ -37,11 +37,3 @@ system:
 #  supportMethodsArguments: true
 #  params: count=countSql
 
-
-file:
-    upload-dir: /usr/local/hcjg/uploads
-#    upload-dir: /root/jianguan/uploads
-    url: oss-cn-shanghai.aliyuncs.com
-    key: LTAI0oAelhyBX0E6
-    secret: l0FwJH7W1RHfgVhXZb3B3B3tSSZ8vJ
-    name: jhpt
