@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -77,6 +79,30 @@ public class UploadUtil {
         Response response = uploadManager.put(file.getBytes(), newFileName, upToken);
         DefaultPutRet putRet = new Gson().fromJson(response.bodyString(),DefaultPutRet.class);
 //        String remoteImageUrl = "http://qgdyb2c03.hn-bkt.clouddn.com/";
+        return remoteImageUrl+putRet.key;
+    }
+    /**
+     * 图片上传
+
+     * @param is  图片路径
+     * @return  链接
+     * @throws QiniuException
+     */
+    public static  String  uploadImage(InputStream is) throws IOException {
+        Auth auth = Auth.create(accessKey,secretKey);
+        String upToken = auth.uploadToken(imageBucket);  //上传凭证
+        com.qiniu.storage.Configuration cfg = new com.qiniu.storage.Configuration(Zone.autoZone());
+        UploadManager uploadManager = new UploadManager(cfg);
+        String newFileName = UUID.randomUUID().toString() + ".jpg" ;
+        ByteArrayOutputStream outStream;
+        outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        while( (len=is.read(buffer)) != -1 ){
+            outStream.write(buffer, 0, len);
+        }
+        Response response = uploadManager.put(outStream.toByteArray(), newFileName, upToken);
+        DefaultPutRet putRet = new Gson().fromJson(response.bodyString(),DefaultPutRet.class);
         return remoteImageUrl+putRet.key;
     }
     /**

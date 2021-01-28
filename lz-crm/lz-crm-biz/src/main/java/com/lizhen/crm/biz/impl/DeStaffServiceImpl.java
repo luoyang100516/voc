@@ -105,6 +105,73 @@ public class DeStaffServiceImpl extends ServiceImpl<DeStaffMapper, DeStaff> impl
                                      .or().eq(DeStaff::getSocialNo,deStaff.getAccount());
                           }).eq(DeStaff::getMerchantId,merchant.getMerchantId());
         DeStaff staff = this.getOne(lambdaQueryWrapper);
+        if (deStaff.getWxId() != null) {
+            staff.setWxId(deStaff.getWxId());
+            this.updateById(staff);
+        }
+        if (staff != null) {
+            if(staff.getStatus()==1 ){
+                String pd = AesEncryptUtil.desEncrypt(staff.getPassword()).replace("\0","");
+                if( pd.equals(deStaff.getPassword()) ){
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("token",createToken(staff));
+                    map.put("name",staff.getName());
+                    map.put("id",staff.getId());
+                    map.put("merchantId",staff.getMerchantId());
+                    map.put("headImage",staff.getHeadImage());
+                    map.put("phone",staff.getPhone());
+                    map.put("idCard",staff.getIdCard());
+                    response.setData(map);
+                    response.setCode(200);
+                    response.setSuccess(true);
+                }else{
+                    response.setMessage("密码错误！");
+                }
+            }else{
+                response.setMessage("账户已被禁用！");
+            }
+        }else{
+            response.setMessage("账号不存在！");
+        }
+        return response ;
+    }
+    @Override
+    public DataResponse wxLogin(DeStaff deStaff ) throws Exception {
+        DataResponse  response = new DataResponse().setCode(500).setSuccess(false);
+        if (StringUtil.isEmpty(deStaff.getAccount())) {
+            return response;
+        }
+        String url = deStaff.getUrl();
+        DeStaff staff;
+        if (url == null) {
+            if (deStaff.getWxId() == null) {
+                return response;
+            }else{
+                LambdaQueryWrapper<DeStaff> lambdaQueryWrapper = new LambdaQueryWrapper();
+                lambdaQueryWrapper.and(wrapper -> {
+                    wrapper.eq(DeStaff::getPhone,deStaff.getAccount())
+                            .or().eq(DeStaff::getIdCard,deStaff.getAccount())
+                            .or().eq(DeStaff::getSocialNo,deStaff.getAccount());
+                }).orderByDesc(DeStaff::getCreateDate);
+                staff = this.getOne(lambdaQueryWrapper);
+            }
+        }else{
+            DeMerchant merchant = deMerchantMapper.getMerchant(deStaff.getUrl());
+            if (merchant == null) {
+                return response.setMessage("未查询到该企业");
+            }
+            LambdaQueryWrapper<DeStaff> lambdaQueryWrapper = new LambdaQueryWrapper();
+            lambdaQueryWrapper.and(wrapper -> {
+                wrapper.eq(DeStaff::getPhone,deStaff.getAccount())
+                        .or().eq(DeStaff::getIdCard,deStaff.getAccount())
+                        .or().eq(DeStaff::getSocialNo,deStaff.getAccount());
+            });
+            staff = this.getOne(lambdaQueryWrapper);
+            if (deStaff.getWxId() != null) {
+                staff.setWxId(deStaff.getWxId());
+                this.updateById(staff);
+            }
+        }
         if (staff != null) {
             if(staff.getStatus()==1 ){
                 String pd = AesEncryptUtil.desEncrypt(staff.getPassword()).replace("\0","");

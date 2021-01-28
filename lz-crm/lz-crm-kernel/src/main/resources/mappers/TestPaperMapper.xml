@@ -97,6 +97,7 @@
         select * from (
             SELECT
                 t1.id projectId,
+                t1.name projectName,
                 NULL lessonId,
                 t2.paper_id paperId,
                 t3.NAME paperName,
@@ -151,6 +152,7 @@
                 (
                 SELECT
                     t1.id projectId,
+                    t1.name projectName,
                     t2.lesson_id lessonId,
                     t2.paper_id paperId,
                     t3.NAME paperName,

@@ -30,6 +30,7 @@ public interface DeStaffService extends IService<DeStaff> {
 
 
     DataResponse login(DeStaff deStaff) throws Exception;
+    DataResponse wxLogin(DeStaff deStaff) throws Exception;
 
     Boolean updatePassword(DeStaff deStaff,PasswordDto passwordDto) throws Exception;
 

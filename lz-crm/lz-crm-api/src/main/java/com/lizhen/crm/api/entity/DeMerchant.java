@@ -84,5 +84,9 @@ public class DeMerchant implements Serializable {
 	 * 
 	 */
 	private Date updateDate;
+	/**
+	 * 小程序二维码地址
+	 */
+	private String qrCode;
 
 }

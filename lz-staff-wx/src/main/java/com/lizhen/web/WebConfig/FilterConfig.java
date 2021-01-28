@@ -47,7 +47,8 @@ public class FilterConfig  implements Filter  {
         String url = request.getServletPath();
         if( url.substring(url.lastIndexOf("\\")+1).equals("/login")||
                 url.substring(url.lastIndexOf("\\")+1).equals("/getIndexInfo")||
-                url.substring(url.lastIndexOf("\\")+1).equals("/addRecord")){
+                url.substring(url.lastIndexOf("\\")+1).equals("/addRecord")||
+                url.substring(url.lastIndexOf("\\")+1).equals("/getOpenId")){
             chain.doFilter(req, res);
          }else{
             String token = request.getHeader( Constants.Token_NAME );

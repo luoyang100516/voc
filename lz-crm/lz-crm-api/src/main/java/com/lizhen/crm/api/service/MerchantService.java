@@ -18,6 +18,8 @@ public interface MerchantService {
 
     DataResponse getStaffIndexInfo(String url);
 
+    DataResponse getWxStaffIndexInfo(String url,String wxId);
+
     DataResponse getMerchantIndexInfo(String url);
 
 }

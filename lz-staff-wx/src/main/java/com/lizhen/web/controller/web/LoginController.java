@@ -2,7 +2,9 @@ package com.lizhen.web.controller.web;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.lizhen.common.response.DataResponse;
+import com.lizhen.common.response.ResCode;
 import com.lizhen.common.util.PinYinUtil;
+import com.lizhen.common.util.QRCodeUtil;
 import com.lizhen.common.util.RequestUtil;
 import com.lizhen.crm.api.dto.PasswordDto;
 import com.lizhen.crm.api.dto.StaffNFC;
@@ -73,8 +75,8 @@ public class LoginController {
     }
 
     @RequestMapping("/getIndexInfo")
-    public DataResponse getIndexInfo(String url){
-        return  merchantService.getStaffIndexInfo(url);
+    public DataResponse getIndexInfo(String url,String wxId){
+        return  merchantService.getWxStaffIndexInfo(url,wxId);
     }
 
     @RequestMapping("/addRecord")
@@ -84,5 +86,16 @@ public class LoginController {
 ////        staffNFC = JSONObject.parseObject(req,StaffNFC.class);
         staffNFC.setIpUrl(RequestUtil.getIpAddress(request));
         return  stClockInRecordService.addNFCSignRecord( staffNFC );
+    }
+    /**
+     * 更新小程序二维码信息
+     */
+    @RequestMapping("/getOpenId")
+    public DataResponse getOpenId(String code)  {
+        String openid = QRCodeUtil.getOpenId(code);
+        if (openid != null) {
+            return new DataResponse().setData(openid);
+        }
+        return new DataResponse().setResponse(false,"失败", ResCode.FAIL.getValue());
     }
 }

@@ -32,6 +32,10 @@ public class ExamResultDTO implements Serializable {
 	 */
 	private String paperName;
 	/**
+	 * 项目名称
+	 */
+	private String projectName;
+	/**
 	 * 试卷类型：1项目试卷 2课程试卷 3章节练习
 	 */
 	private Integer type;

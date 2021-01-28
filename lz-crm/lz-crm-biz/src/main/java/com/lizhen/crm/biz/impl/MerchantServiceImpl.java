@@ -162,21 +162,39 @@ public class MerchantServiceImpl implements MerchantService {
             return new DataResponse().setCode(500).setSuccess(false).setMessage("无地址");
         }else{
             DeMerchant merchant = deMerchantMapper.getMerchant(url);
-            LambdaQueryWrapper<DeProjectBase> queryWrapper = new LambdaQueryWrapper();
-            queryWrapper.eq(DeProjectBase::getMerchantId,merchant.getMerchantId());
-            List<DeProjectBase> projectBaseList = deProjectBaseMapper.selectList(queryWrapper);
-            projectBaseList.forEach(projectBase -> {
-                List<Integer> lessonIds = this.deProjectBaseMapper.getLessonRelation(projectBase.getId());
-                if (lessonIds.size()!=0){
-                    List<DeClassLesson> lessonList = deClassLessonMapper.selectBatchIds(lessonIds);
-                    projectBase.setLessonList(lessonList);
-                }
-            });
-            JSONObject object = new JSONObject();
-            object.put("merchantInfo",merchant);
-            object.put("projectList",projectBaseList);
-            return new DataResponse().setData(object);
+            return getDataResponse(merchant);
         }
+    }
+
+    @Override
+    public DataResponse getWxStaffIndexInfo(String url,String wxId) {
+        DeMerchant merchant;
+        if (url == null) {
+            merchant = deMerchantMapper.getMerchantByWxId(wxId);
+        }else{
+            merchant = deMerchantMapper.getMerchant(url);
+        }
+        return getDataResponse(merchant);
+    }
+
+    private DataResponse getDataResponse(DeMerchant merchant) {
+        if (merchant == null) {
+            return new DataResponse().setCode(500).setSuccess(false).setMessage("未查询到企业");
+        }
+        LambdaQueryWrapper<DeProjectBase> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(DeProjectBase::getMerchantId,merchant.getMerchantId());
+        List<DeProjectBase> projectBaseList = deProjectBaseMapper.selectList(queryWrapper);
+        projectBaseList.forEach(projectBase -> {
+            List<Integer> lessonIds = this.deProjectBaseMapper.getLessonRelation(projectBase.getId());
+            if (lessonIds.size()!=0){
+                List<DeClassLesson> lessonList = deClassLessonMapper.selectBatchIds(lessonIds);
+                projectBase.setLessonList(lessonList);
+            }
+        });
+        JSONObject object = new JSONObject();
+        object.put("merchantInfo",merchant);
+        object.put("projectList",projectBaseList);
+        return new DataResponse().setData(object);
     }
 
     @Override

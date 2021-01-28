@@ -116,5 +116,9 @@ public class DeStaff implements Serializable {
 	 * 读卡器id
 	 */
 	private String uid;
+	/**
+	 * 微信ID
+	 */
+	private String wxId;
 
 }

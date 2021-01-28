@@ -16,4 +16,6 @@ import org.apache.ibatis.annotations.Param;
 public interface DeMerchantMapper extends BaseMapper<DeMerchant> {
 
     DeMerchant getMerchant(@Param("url") String url);
+
+    DeMerchant getMerchantByWxId(@Param("wxId") String wxId);
 }
