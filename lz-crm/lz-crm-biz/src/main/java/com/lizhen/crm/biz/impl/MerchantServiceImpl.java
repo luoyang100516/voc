@@ -8,6 +8,7 @@ import com.lizhen.common.response.ResCode;
 import com.lizhen.common.util.AesEncryptUtil;
 import com.lizhen.common.util.JwtUtil;
 import com.lizhen.common.util.PageUtil;
+import com.lizhen.common.util.StringUtil;
 import com.lizhen.crm.api.dto.MerchantOperatorDTO;
 import com.lizhen.crm.api.entity.*;
 import com.lizhen.crm.api.service.MerchantService;
@@ -38,6 +39,9 @@ public class MerchantServiceImpl implements MerchantService {
     DeProjectBaseMapper deProjectBaseMapper;
     @Autowired
     DeClassLessonMapper deClassLessonMapper;
+
+    @Autowired
+    DeStaffMapper deStaffMapper;
 
 
     @Transactional
@@ -158,26 +162,26 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public DataResponse getStaffIndexInfo(String url) {
-        if (url == null) {
+        if (StringUtil.isEmpty(url)) {
             return new DataResponse().setCode(500).setSuccess(false).setMessage("无地址");
         }else{
             DeMerchant merchant = deMerchantMapper.getMerchant(url);
-            return getDataResponse(merchant);
+            return getDataResponse(merchant,null);
         }
     }
 
     @Override
     public DataResponse getWxStaffIndexInfo(String url,String wxId) {
         DeMerchant merchant;
-        if (url == null) {
+        if (StringUtil.isEmpty(url)) {
             merchant = deMerchantMapper.getMerchantByWxId(wxId);
         }else{
             merchant = deMerchantMapper.getMerchant(url);
         }
-        return getDataResponse(merchant);
+        return getDataResponse(merchant,wxId);
     }
 
-    private DataResponse getDataResponse(DeMerchant merchant) {
+    private DataResponse getDataResponse(DeMerchant merchant,String wxId) {
         if (merchant == null) {
             return new DataResponse().setCode(500).setSuccess(false).setMessage("未查询到企业");
         }
@@ -194,12 +198,28 @@ public class MerchantServiceImpl implements MerchantService {
         JSONObject object = new JSONObject();
         object.put("merchantInfo",merchant);
         object.put("projectList",projectBaseList);
+        if (!StringUtil.isEmpty(wxId)) {
+            LambdaQueryWrapper<DeStaff> lambdaQueryWrapper = new LambdaQueryWrapper();
+            lambdaQueryWrapper.eq(DeStaff::getWxId,wxId);
+            DeStaff staff = deStaffMapper.selectOne(lambdaQueryWrapper);
+            if(staff!=null){
+                Map<String,Object> map = new HashMap<>();
+                map.put("token",createUserToken(staff));
+                map.put("name",staff.getName());
+                map.put("id",staff.getId());
+                map.put("merchantId",staff.getMerchantId());
+                map.put("headImage",staff.getHeadImage());
+                map.put("phone",staff.getPhone());
+                map.put("idCard",staff.getIdCard());
+                object.put("userInfo",map);
+            }
+        }
         return new DataResponse().setData(object);
     }
 
     @Override
     public DataResponse getMerchantIndexInfo(String url){
-        if (url == null) {
+        if (StringUtil.isEmpty(url)) {
             return new DataResponse().setCode(500).setSuccess(false).setMessage("无地址");
         }else{
             DeMerchant merchant = deMerchantMapper.getMerchant(url);
@@ -210,6 +230,12 @@ public class MerchantServiceImpl implements MerchantService {
     public String  createToken( MerchantBase merchantBase  ){
         String jsonString = JSONObject.toJSONString(merchantBase);//将java对象转换为jsonString
         String sign = JwtUtil.sign( merchantBase.getAccount() , String.valueOf(System.currentTimeMillis()), jsonString );
+        System.out.println("=========token========"+ sign);
+        return sign;
+    }
+    public String  createUserToken( DeStaff staff  ){
+        String jsonString = JSONObject.toJSONString(staff);//将java对象转换为jsonString
+        String sign = JwtUtil.sign( staff.getAccount() , String.valueOf(System.currentTimeMillis()), jsonString );
         System.out.println("=========token========"+ sign);
         return sign;
     }

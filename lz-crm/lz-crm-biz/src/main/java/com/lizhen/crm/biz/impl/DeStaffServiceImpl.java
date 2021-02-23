@@ -94,18 +94,22 @@ public class DeStaffServiceImpl extends ServiceImpl<DeStaffMapper, DeStaff> impl
         if (StringUtil.isEmpty(deStaff.getAccount())) {
             return response;
         }
-        DeMerchant merchant = deMerchantMapper.getMerchant(deStaff.getUrl());
-        if (merchant == null) {
-            return response.setMessage("未查询到该企业");
-        }
+        DeStaff staff;
         LambdaQueryWrapper<DeStaff> lambdaQueryWrapper = new LambdaQueryWrapper();
-        lambdaQueryWrapper.and(wrapper -> {
-                              wrapper.eq(DeStaff::getPhone,deStaff.getAccount())
-                                     .or().eq(DeStaff::getIdCard,deStaff.getAccount())
-                                     .or().eq(DeStaff::getSocialNo,deStaff.getAccount());
-                          }).eq(DeStaff::getMerchantId,merchant.getMerchantId());
-        DeStaff staff = this.getOne(lambdaQueryWrapper);
-        if (deStaff.getWxId() != null) {
+        if (StringUtil.isEmpty(deStaff.getUrl())) {
+            lambdaQueryWrapper.eq(DeStaff::getWxId,deStaff.getWxId());
+            staff = this.getOne(lambdaQueryWrapper);
+        }else{
+            DeMerchant merchant = deMerchantMapper.getMerchant(deStaff.getUrl());
+            if (merchant == null) {
+                return response.setMessage("未查询到该企业");
+            }
+            lambdaQueryWrapper.and(wrapper -> {
+                wrapper.eq(DeStaff::getPhone,deStaff.getAccount())
+                        .or().eq(DeStaff::getIdCard,deStaff.getAccount())
+                        .or().eq(DeStaff::getSocialNo,deStaff.getAccount());
+            }).eq(DeStaff::getMerchantId,merchant.getMerchantId());
+            staff = this.getOne(lambdaQueryWrapper);
             staff.setWxId(deStaff.getWxId());
             this.updateById(staff);
         }
